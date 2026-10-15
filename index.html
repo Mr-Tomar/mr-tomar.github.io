@@ -741,6 +741,23 @@ footer{background:#080809;padding:72px 5% 32px}
   .why-cards{grid-template-columns:1fr}
   .stat-boxes{grid-template-columns:1fr 1fr}
 }
+
+/* BCI disclaimer */
+.disc-ov{position:fixed;inset:0;z-index:1000;background:rgba(12,12,14,.82);display:none;align-items:center;justify-content:center;padding:16px}
+.disc-ov.open{display:flex}
+.disc-box{background:var(--white);color:var(--ink);max-width:640px;width:100%;max-height:90vh;overflow-y:auto;border-radius:4px;border-top:3px solid var(--gold);box-shadow:var(--shadow);padding:32px 28px}
+.disc-box h2{font-family:var(--ff-h);font-size:1.6rem;font-weight:600;margin-bottom:14px}
+.disc-box p,.disc-box li{font-family:var(--ff-ui);font-size:.8rem;font-weight:300;line-height:1.7;color:#3a3640}
+.disc-box p{margin-bottom:10px}
+.disc-box ul{margin:0 0 12px 18px}
+.disc-box li{margin-bottom:6px}
+.disc-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.disc-actions button{font-family:var(--ff-ui);font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:13px 24px;border-radius:3px;cursor:pointer}
+.disc-agree{background:var(--gold);color:var(--ink);border:1px solid var(--gold)}
+.disc-disagree{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.footer-legal button{background:none;border:none;padding:0;cursor:pointer;font-family:var(--ff-ui);font-size:.7rem;color:rgba(255,255,255,.2);transition:color .2s}
+.footer-legal button:hover{color:var(--gold)}
+.footer-bci{font-family:var(--ff-ui);font-size:.65rem;font-weight:300;line-height:1.6;color:rgba(255,255,255,.3);text-align:center;padding:0 16px 24px;max-width:900px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -1342,10 +1359,32 @@ footer{background:#080809;padding:72px 5% 32px}
     <ul class="footer-legal">
       <li><a href="#">Privacy Policy</a></li>
       <li><a href="#">Terms & Conditions</a></li>
-      <li><a href="#">Disclaimer</a></li>
+      <li><button type="button" onclick="openDisclaimer()">Disclaimer</button></li>
     </ul>
   </div>
+  <p class="footer-bci">The Bar Council of India does not permit advertisement or solicitation by advocates in any form or manner. The content of this website is for general information only and is not legal advice. Use of this website does not create an advocate–client relationship.</p>
 </footer>
+
+<!-- Disclaimer (Bar Council of India Rules, Part VI, Chapter II, Rule 36) -->
+<div class="disc-ov" id="disclaimer" role="dialog" aria-modal="true" aria-labelledby="disc-title">
+  <div class="disc-box">
+    <h2 id="disc-title">Disclaimer</h2>
+    <p>Under the rules of the Bar Council of India, advocates are not permitted to solicit work or advertise in any form or manner. By clicking <strong>“I Agree”</strong>, you acknowledge and confirm that:</p>
+    <ul>
+      <li>you are seeking information about Legal Squads and its advocates of your own accord, and there has been no advertisement, personal communication, solicitation, invitation or inducement of any sort from Legal Squads or any of its members;</li>
+      <li>the information on this website is provided only at your request and for general information, and is not an advertisement or solicitation of work;</li>
+      <li>nothing on this website is legal advice, and it should not be relied on as a substitute for advice from a qualified advocate on the facts of your matter;</li>
+      <li>using this website, or contacting us through it, by email, phone or WhatsApp, does not by itself create an advocate–client relationship, so please do not share confidential information until an engagement has been agreed;</li>
+      <li>past matters or outcomes mentioned on this website do not guarantee a similar result in any other matter;</li>
+      <li>Legal Squads is not liable for any consequence of action taken by relying on the material on this website, or for the content of any third-party website linked from it.</li>
+    </ul>
+    <p>All content on this website is the intellectual property of Legal Squads.</p>
+    <div class="disc-actions">
+      <button type="button" class="disc-agree" onclick="agreeDisclaimer()">I Agree</button>
+      <button type="button" class="disc-disagree" onclick="disagreeDisclaimer()">I Disagree</button>
+    </div>
+  </div>
+</div>
 
 <!-- WhatsApp FAB -->
 <a href="https://wa.me/919910200803" target="_blank" rel="noopener"
@@ -1426,6 +1465,20 @@ function submitForm(e){
   btn.textContent='✓ Submitted — We\'ll Call You Shortly!';
   btn.style.background='#2d7a45';btn.style.color='#fff';btn.disabled=true;
 }
+
+// Disclaimer: shown on first visit until the visitor agrees
+const discEl=document.getElementById('disclaimer');
+function openDisclaimer(){discEl.classList.add('open');document.body.style.overflow='hidden';discEl.querySelector('.disc-agree').focus({preventScroll:true});discEl.querySelector('.disc-box').scrollTop=0}
+function agreeDisclaimer(){
+  try{localStorage.setItem('ls_disclaimer_agreed','1')}catch(e){}
+  discEl.classList.remove('open');document.body.style.overflow='';
+}
+function disagreeDisclaimer(){
+  if(history.length>1)history.back();else location.href='https://www.google.com/';
+}
+let discAgreed=false;
+try{discAgreed=localStorage.getItem('ls_disclaimer_agreed')==='1'}catch(e){}
+if(!discAgreed)openDisclaimer();
 </script>
 </body>
 </html>
